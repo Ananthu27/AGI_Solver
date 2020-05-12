@@ -41,8 +41,10 @@ the selecting of rules/algorithm and maintaining the rating vector shoudl be don
 
 -- look into 
 
-the type of data structure for implementaion of the state space 
+the type of data structure for implementaion of the state space -- NOT DONE
     decide on the data struct by looking into different possible ai problems 
     or can be totally eliminated by letting the user handle the maintain the state space 
 
-pointers and refrences to fuctions in c++
+pointers and refrences to fuctions in c++  -- DONE
+
+generics in c++ -- NOT DONE
