@@ -9,7 +9,40 @@ inputs include a atomic GOAL state in valid to the state space / universe
     ( as a atomic required goal or set of accepted atomic instance )
 inputs include all applicable rules to the universe 
     (as a possible pointer to the same function , returns true if rule is applicable and vice versa (inputs to this fuction will the identefier for the rule))
-    (this pointed function should be a rule switcher which rules are identified by)
+    (this pointed function should be a rule switcher , in which rules are identified by numbers , those rules are funtions again)
     // study about pointers to funcitons in c++
 inputs include a heuristic funciton which evaluates satates potential
     (as a pointer to the same funcions (inputs the fucntion is an atomic state) )
+
+-- implementaion ideas 
+
+dynamic nature of state space flexibelity 
+    can be obtained by search algorithm only returning next best state in one call 
+        hence call these search algorithms repeatedly to obtain the entire path 
+        and the changing environment can be reflected with changing prameters of the current state spcae parameter.
+
+should use more than one search algorithm to get to next best state 
+
+most optimal applicable rule should be based on the success rate of the search algorithm based on the success of last suggested move
+    to implement the same maintain a vector to hold the rating of search algorithm , which is dynamic based on the algos perfomance 
+    can enable the possible development into a reencforcement learning implementaion ? 
+    can use the same vector to decide the order of the algorithm chosen 
+
+intense environment , which requires fast responses may use the rating vector to choose the most effective algo 
+
+the rating vector changes based on 
+    how effective the last suggested rule was (requires renforement learning applicatoins) or based on wheather the last suggested rule was applied
+    the time taken to find a suggestion 
+    ability of finding a applicable rule itself
+
+the selecting of rules/algorithm and maintaining the rating vector shoudl be done by the separate funcion 
+    this fuctions is called by user when needed a rule suggestion 
+
+
+-- look into 
+
+the type of data structure for implementaion of the state space 
+    decide on the data struct by looking into different possible ai problems 
+    or can be totally eliminated by letting the user handle the maintain the state space 
+
+pointers and refrences to fuctions in c++
