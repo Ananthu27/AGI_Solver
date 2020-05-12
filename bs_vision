@@ -1,0 +1,15 @@
+The VISION 
+
+to creat a simple universal problem solver () 
+
+inputs include the current state space or sub state spcae 
+    - think about the possible ways a state space can be represeted 
+    ( as a relevant data structure of (atomic possible states))
+inputs include a atomic GOAL state in valid to the state space / universe 
+    ( as a atomic required goal or set of accepted atomic instance )
+inputs include all applicable rules to the universe 
+    (as a possible pointer to the same function , returns true if rule is applicable and vice versa (inputs to this fuction will the identefier for the rule))
+    (this pointed function should be a rule switcher which rules are identified by)
+    // study about pointers to funcitons in c++
+inputs include a heuristic funciton which evaluates satates potential
+    (as a pointer to the same funcions (inputs the fucntion is an atomic state) )
