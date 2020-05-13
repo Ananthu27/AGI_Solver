@@ -48,3 +48,13 @@ the type of data structure for implementaion of the state space -- NOT DONE
 pointers and refrences to fuctions in c++  -- DONE
 
 generics in c++ -- NOT DONE
+
+
+-- PROGRAMS THAT USE AGIS SHOULD HAVE 
+
+class or struch (userdefiend datatype) for the atomic state will be refered to as DTYPE
+ 
+a class with methods - 
+    DTYPE apply(int rule_number); //return a new state (next) is rule is applicable else returns a non initalised state ie state.exitst = false
+    float heuristic(DTYPE state); //returns the heuristic value of state the smaller the return value closer the state is to goal
+    bool exist(); //returns true if state initalised
