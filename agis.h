@@ -13,6 +13,10 @@ public:
     agis() {}
     ~agis() {}
 
+    static void documentation()
+    {
+    }
+
     int shc(dtype obj)
     {
         int rule = -1;
