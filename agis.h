@@ -1,6 +1,6 @@
-#include <iostream>
 #include <vector>
 #include <time.h>
+#include <iostream>
 // #include <limits>
 
 using namespace std;
@@ -13,26 +13,26 @@ public:
     agis() {}
     ~agis() {}
 
-    int shc(dtype (*apply)(int), float (*heuristic)(dtype), int max_rule, dtype current, dtype goal)
+    int shc(dtype obj)
     {
         int rule = -1;
 
-        if (current.exist() && heuristic(current) != 0)
+        if (obj.current.exist() && obj.heuristic(obj.current) != 0)
         {
             try
             {
-                vector<int> rule_applied = vector<int>(max_rule, 0);
-                int rand_rule = rand() % max_rule + 1;
+                vector<int> rule_applied = vector<int>(obj.max_rule, 0);
+                int rand_rule = rand() % obj.max_rule + 1;
                 srand(time(0));
-                for (int i = 1; i < max_rule; i++)
+                for (int i = 1; i < obj.max_rule; i++)
                 {
-                    while (rand_rule > 0 && rand_rule <= max_rule && rule_applied[rand_rule] == 1)
-                        rand_rule = rand() % max_rule + 1;
+                    while (rand_rule > 0 && rand_rule <= obj.max_rule && rule_applied[rand_rule] == 1)
+                        rand_rule = rand() % obj.max_rule + 1;
                     rule_applied[rand_rule] = 1;
 
-                    dtype next = apply(rand_rule);
+                    auto next = obj.apply(rand_rule);
 
-                    if (next.exist() && heuristic(current) > heuristic(next))
+                    if (next.exist() && obj.heuristic(obj.current) > obj.heuristic(next))
                     {
                         rule = rand_rule;
                         break;
@@ -48,19 +48,19 @@ public:
         return rule;
     }
 
-    int sthc(dtype (*apply)(int), float (*heuristic)(dtype), int max_rule, dtype current, dtype goal)
+    int sthc(dtype object)
     {
         int rule = -1;
 
-        if (current.exist() && heuristic(current) != 0)
+        if (object.current.exist() && object.heuristic(object.current) != 0)
         {
             try
             {
-                float min = heuristic(current);
-                for (int r = 1; r <= max_rule; r++)
+                float min = object.heuristic(object.current);
+                for (int r = 1; r <= object.max_rule; r++)
                 {
-                    dtype next = apply(r);
-                    if (next.exist() && heuristic(next) < min)
+                    auto next = object.apply(r);
+                    if (next.exist() && object.heuristic(next) < min)
                         rule = r;
                 }
             }
