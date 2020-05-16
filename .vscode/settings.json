@@ -3,6 +3,7 @@
         "vector": "cpp",
         "*.tcc": "cpp",
         "optional": "cpp",
-        "streambuf": "cpp"
+        "streambuf": "cpp",
+        "iostream": "cpp"
     }
 }

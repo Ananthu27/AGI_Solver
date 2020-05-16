@@ -6,6 +6,7 @@ int main()
 {
     problem p;
     agis<problem> solver;
+    solver.documentation();
 
     p.dispaly();
 
