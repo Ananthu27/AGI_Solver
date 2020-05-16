@@ -1,6 +1,7 @@
 #include <vector>
 #include <time.h>
 #include <iostream>
+#include <math.h>
 // #include <limits>
 
 template <typename dtype>
@@ -13,52 +14,31 @@ public:
 
     int shc(dtype);
     int sthc(dtype);
-    static void documentation()
-    {
-        std::cout << "---@ DOCUMENTATION @---" << std::endl;
-        std::cout << std::endl;
-        std::cout << " Declare the class object as 'agis<typename> object_name;' " << std::endl;
-        std::cout << " The typename is the class name of the problem class.\n Further the problem class will be reffered to as 'dtype'." << std::endl;
-        std::cout << std::endl;
-        std::cout << " dtype's object must include states start, current and goal. " << std::endl;
-        std::cout << " These state objects should have a function 'bool exist();' which is used to check wheater they are initialised." << std::endl;
-        std::cout << " dtype must include a 'int max_rule; which is initialesed as the max no of rules that are applicable." << std::endl;
-        std::cout << " dtype's membser fuctions should include :" << std::endl;
-        std::cout << std::endl;
-        std::cout << " \t state apply(int rule_number);" << std::endl;
-        std::cout << " \t\t which returns a state object initialised if rules is applicable and exist returns true for the returned object" << std::endl;
-        std::cout << " \t\t and state object returns false on exist if rule in not applicable " << std::endl;
-        std::cout << " \t\t apply is basically a int rule swithcher , with rule_number <= max_rule" << std::endl;
-        std::cout << std::endl;
-        std::cout << " \t float heuristic(state object)" << std::endl;
-        std::cout << " \t\t returns the float distance value of a prediction of how far\n \t\tthe state passed as parameter to the function is from the goal state" << std::endl;
-        std::cout << std::endl;
-        std::cout << "---@ DOCUMENTATION @---" << std::endl;
-    }
+    int sma(dtype, float);
 };
 
 template <typename dtype>
 
-int agis<dtype>::shc(dtype obj)
+int agis<dtype>::shc(dtype object)
 {
     int rule = -1;
 
-    if (obj.current.exist() && obj.heuristic(obj.current) != 0)
+    if (object.current.exist() && object.heuristic(object.current) != 0 && object.goal.exist())
     {
         try
         {
-            std::vector<int> rule_applied = std::vector<int>(obj.max_rule, 0);
-            int rand_rule = rand() % obj.max_rule + 1;
+            std::vector<int> rule_applied = std::vector<int>(object.max_rule, 0);
+            int rand_rule = rand() % object.max_rule + 1;
             srand(time(0));
-            for (int i = 1; i < obj.max_rule; i++)
+            for (int i = 1; i < object.max_rule; i++)
             {
-                while (rand_rule > 0 && rand_rule <= obj.max_rule && rule_applied[rand_rule] == 1)
-                    rand_rule = rand() % obj.max_rule + 1;
+                while (rand_rule > 0 && rand_rule <= object.max_rule && rule_applied[rand_rule] == 1)
+                    rand_rule = rand() % object.max_rule + 1;
                 rule_applied[rand_rule] = 1;
 
-                auto next = obj.apply(rand_rule);
+                auto next = object.apply(rand_rule);
 
-                if (next.exist() && obj.heuristic(obj.current) > obj.heuristic(next))
+                if (next.exist() && object.heuristic(object.current) > object.heuristic(next))
                 {
                     rule = rand_rule;
                     break;
@@ -98,5 +78,58 @@ int agis<dtype>::sthc(dtype object)
         }
     }
 
+    return rule;
+}
+
+template <typename dtype>
+
+int agis<dtype>::sma(dtype object, float temperature)
+{
+    srand(time(0));
+    int rule = -1;
+    if (object.current.exist() && object.heuristic(object.current) != 0 && object.goal.exist())
+    {
+        try
+        {
+            std::vector<int> rule_applied = std::vector<int>(object.max_rule, 0);
+            int rand_rule, sum;
+            auto next = object.apply(-1);
+
+            while (!next.exist())
+            {
+                rand_rule = rand() % object.max_rule + 1;
+
+                next = object.apply(rand_rule);
+
+                if (!next.exist())
+                    rule_applied[rand_rule - 1] = 1;
+                sum = 0;
+                for (auto value : rule_applied)
+                    sum += value;
+
+                if (sum == object.max_rule)
+                    break;
+            }
+
+            if (next.exist())
+            {
+                float cur_energy = object.heuristic(object.current);
+                float new_energy = object.heuristic(next);
+
+                if (new_energy < cur_energy)
+                    rule = rand_rule;
+
+                else if (abs(log(temperature) + temperature * sin(temperature)) >= ((float)rand() / 100000000))
+                    rule = rand_rule;
+
+                else
+                    rule = -1;
+            }
+        }
+        catch (std::exception e)
+        {
+            std::cout << "Exception in sma." << std::endl;
+        }
+    }
     return rule;
 }

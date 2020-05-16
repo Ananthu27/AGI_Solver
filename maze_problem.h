@@ -42,6 +42,28 @@ public:
     void dispaly();
     my_vector::my_vector<int> apply(int);
     float heuristic(my_vector::my_vector<int>);
+    static void documentation()
+    {
+        std::cout << "---@ DOCUMENTATION @---" << std::endl;
+        std::cout << std::endl;
+        std::cout << " Declare the class object as 'agis<typename> object_name;' " << std::endl;
+        std::cout << " The typename is the class name of the problem class.\n Further the problem class will be reffered to as 'dtype'." << std::endl;
+        std::cout << std::endl;
+        std::cout << " dtype's object must include states start, current and goal. " << std::endl;
+        std::cout << " These state objects should have a function 'bool exist();' which is used to check wheater they are initialised." << std::endl;
+        std::cout << " dtype must include a 'int max_rule; which is initialesed as the max no of rules that are applicable." << std::endl;
+        std::cout << " dtype's membser fuctions should include :" << std::endl;
+        std::cout << std::endl;
+        std::cout << " \t state apply(int rule_number);" << std::endl;
+        std::cout << " \t\t which returns a state object initialised if rules is applicable and exist returns true for the returned object" << std::endl;
+        std::cout << " \t\t and state object returns false on exist if rule in not applicable " << std::endl;
+        std::cout << " \t\t apply is basically a int rule swithcher , with rule_number <= max_rule" << std::endl;
+        std::cout << std::endl;
+        std::cout << " \t float heuristic(state object)" << std::endl;
+        std::cout << " \t\t returns the float distance value of a prediction of how far\n \t\tthe state passed as parameter to the function is from the goal state" << std::endl;
+        std::cout << std::endl;
+        std::cout << "---@ DOCUMENTATION @---" << std::endl;
+    }
 };
 
 problem::problem()
