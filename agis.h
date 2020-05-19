@@ -23,7 +23,7 @@ int agis<dtype>::shc(dtype object)
 {
     int rule = -1;
 
-    if (object.current.exist() && object.heuristic(object.current) != 0 && object.goal.exist())
+    if (object.current.exist() && object.heuristic(object.current) != 0)
     {
         try
         {
@@ -62,20 +62,29 @@ int agis<dtype>::sthc(dtype object)
 
     if (object.current.exist() && object.heuristic(object.current) != 0)
     {
+        // std::cout << "start if " << std::endl;
         try
         {
+            // std::cout << "start try " << std::endl;
+
             float min = object.heuristic(object.current);
+            // std::cout << "min : " << min << std::endl;
             for (int r = 1; r <= object.max_rule; r++)
             {
                 auto next = object.apply(r);
+
+                // std::cout << next.exist() << std::endl;
+
                 if (next.exist() && object.heuristic(next) < min)
                     rule = r;
             }
+            // std::cout << "end try " << std::endl;
         }
         catch (std::exception e)
         {
             std::cout << "exception in sthc " << std::endl;
         }
+        // std::cout << "end if " << std::endl;
     }
 
     return rule;
@@ -87,7 +96,7 @@ int agis<dtype>::sma(dtype object, float temperature)
 {
     srand(time(0));
     int rule = -1;
-    if (object.current.exist() && object.heuristic(object.current) != 0 && object.goal.exist())
+    if (object.current.exist() && object.heuristic(object.current) != 0)
     {
         try
         {
