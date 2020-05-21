@@ -14,7 +14,7 @@ public:
 
     int shc(dtype);
     int sthc(dtype);
-    int sma(dtype, float);
+    int sma(dtype, double);
 };
 
 template <typename dtype>
@@ -67,7 +67,7 @@ int agis<dtype>::sthc(dtype object)
         {
             // std::cout << "start try " << std::endl;
 
-            float min = object.heuristic(object.current);
+            double min = object.heuristic(object.current);
             // std::cout << "min : " << min << std::endl;
             for (int r = 1; r <= object.max_rule; r++)
             {
@@ -92,7 +92,7 @@ int agis<dtype>::sthc(dtype object)
 
 template <typename dtype>
 
-int agis<dtype>::sma(dtype object, float temperature)
+int agis<dtype>::sma(dtype object, double temperature)
 {
     srand(time(0));
     int rule = -1;
@@ -122,13 +122,13 @@ int agis<dtype>::sma(dtype object, float temperature)
 
             if (next.exist())
             {
-                float cur_energy = object.heuristic(object.current);
-                float new_energy = object.heuristic(next);
+                double cur_energy = object.heuristic(object.current);
+                double new_energy = object.heuristic(next);
 
                 if (new_energy < cur_energy)
                     rule = rand_rule;
 
-                else if (abs(log(temperature) + temperature * sin(temperature)) >= ((float)rand() / 100000000))
+                else if (abs(log(temperature) + temperature * sin(temperature)) >= ((double)rand() / 100000000))
                     rule = rand_rule;
 
                 else

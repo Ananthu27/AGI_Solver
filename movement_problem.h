@@ -5,24 +5,24 @@
 class limb
 {
 public:
-    float joint[2];
-    float awx, length;
-    float climit, aclimit;
+    double joint[2];
+    double awx, length;
+    double climit, aclimit;
     limb *parent_joint;
     limb *child_joint;
-    float goal[2] = {-1, -1};
+    double goal[2] = {-1, -1};
 
     limb();
-    limb(float *joint, float awx, float length, float limit);
-    limb(limb *parent_joint, float awx, float length, float limit);
+    limb(double *joint, double awx, double length, double limit);
+    limb(limb *parent_joint, double awx, double length, double limit);
     limb(const limb &obj);
     ~limb();
 
     bool exist();
     void set_child(limb *child_joint);
-    void set_goal(float *g);
+    void set_goal(double *g);
     void propagate_change();
-    float heuristic();
+    double heuristic();
     void display();
 };
 
@@ -31,7 +31,7 @@ limb::limb()
     joint[0] = -1;
 }
 
-limb::limb(float *joint, float awx, float length, float limit)
+limb::limb(double *joint, double awx, double length, double limit)
 {
     for (int i = 0; i < 2; i++)
         this->joint[i] = *(joint + i);
@@ -42,7 +42,7 @@ limb::limb(float *joint, float awx, float length, float limit)
     this->aclimit = awx + limit;
 }
 
-limb::limb(limb *parent_joint, float awx, float length, float limit)
+limb::limb(limb *parent_joint, double awx, double length, double limit)
 {
     this->joint[0] = (cos(rad((*parent_joint).awx)) * (*parent_joint).length) + (*parent_joint).joint[0];
     this->joint[1] = (sin(rad((*parent_joint).awx)) * (*parent_joint).length) + (*parent_joint).joint[1];
@@ -87,7 +87,7 @@ void limb::set_child(limb *child_joint)
     this->child_joint = child_joint;
 }
 
-void limb::set_goal(float *g)
+void limb::set_goal(double *g)
 {
     try
     {
@@ -110,9 +110,9 @@ void limb::propagate_change()
     }
 }
 
-float limb::heuristic()
+double limb::heuristic()
 {
-    float d = -1;
+    double d = -1;
 
     bool go_to_next = false;
 
@@ -121,8 +121,8 @@ float limb::heuristic()
 
     if (!go_to_next)
     {
-        float x = (cos(rad(awx)) * length) + joint[0];
-        float y = (sin(rad(awx)) * length) + joint[1];
+        double x = (cos(rad(awx)) * length) + joint[0];
+        double y = (sin(rad(awx)) * length) + joint[1];
         // std::cout << "the tip at : " << x << "," << y << " : ";
         d = sqrt(pow(x - goal[0], 2) + pow(y - goal[1], 2));
     }
@@ -151,24 +151,24 @@ public:
     int max_rule = 2;
 
     problem();
-    problem(float *joint, float awx, float length, float limit);
-    problem(limb *parent_joint, float awx, float length, float limit);
+    problem(double *joint, double awx, double length, double limit);
+    problem(limb *parent_joint, double awx, double length, double limit);
     ~problem();
 
     limb rotate_c();
     limb rotate_ac();
     limb apply(int rule);
-    float heuristic(limb object);
+    double heuristic(limb object);
 };
 
 problem::problem() {}
 
-problem::problem(float *joint, float awx, float length, float limit)
+problem::problem(double *joint, double awx, double length, double limit)
 {
     current = limb(joint, awx, length, limit);
 }
 
-problem::problem(limb *parent_joint, float awx, float length, float limit)
+problem::problem(limb *parent_joint, double awx, double length, double limit)
 {
     current = limb(parent_joint, awx, length, limit);
 }
@@ -184,7 +184,7 @@ limb problem::rotate_c()
     {
         // std::cout << " can be rotated clock wise" << std::endl;
         result = current;
-        --result.awx;
+        result.awx -= 1;
         result.propagate_change();
     }
     return result;
@@ -197,13 +197,13 @@ limb problem::rotate_ac()
     {
         // std::cout << " can be rotated anit clock wise" << std::endl;
         result = current;
-        ++result.awx;
+        result.awx += 1;
         result.propagate_change();
     }
     return result;
 }
 
-float problem::heuristic(limb object)
+double problem::heuristic(limb object)
 {
     return object.heuristic();
 }
