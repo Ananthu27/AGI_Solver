@@ -1,60 +1,40 @@
 #include <iostream>
 #include "movement_problem.h"
 #include "agis.h"
+#include <vector>
 
 int main()
 {
     agis<problem> solver;
-    // joint, awx, length, joint_to, climit, aclimit;
+    problem body[2];
     float origin[] = {0, 0};
-    problem arm(origin, 0, 5, -90, 90);
-    problem forearm(&arm.current, 0, 4, -45, 45);
-    float goal[] = {4, 3};
-    arm.current.set_child(&forearm.current);
-    forearm.current.set_goal(goal);
+    body[0] = problem(origin, 0, 3, -90, 90);
+    body[1] = problem(&body[0].current, 0, 4, -90, 90);
+    body[0].current.set_child(&body[1].current);
+    float goal[] = {0, 7};
+    body[1].current.set_goal(goal);
 
-    // arm.current.display();
-    // forearm.current.display();
+    // for (auto l : body)
+    //     l.current.display();
+    std::cout << body[0].heuristic(body[0].current) << std::endl;
 
-    std::cout << arm.heuristic(arm.current) << std::endl;
-    std::cout << forearm.heuristic(forearm.current) << std::endl;
+    int rule;
+    bool bflag = false;
+    while (!bflag)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            rule = solver.sthc(body[i]);
+            if (rule <= body[i].max_rule && rule > 0)
+            {
+                body[i].current = body[i].apply(rule);
+            }
+            else
+                bflag = true;
+        }
+    }
 
-    arm.current = arm.rotate_c();
-    // arm.current.display();
-
-    std::cout << arm.heuristic(arm.current) << std::endl;
-    std::cout << forearm.heuristic(forearm.current) << std::endl;
-
-    arm.current = arm.rotate_ac();
-    arm.current = arm.rotate_ac();
-    arm.current.display();
-
-    std::cout << arm.heuristic(arm.current) << std::endl;
-    std::cout << forearm.heuristic(forearm.current) << std::endl;
-
-    // std::cout << solver.shc(arm) << std::endl;
-    // std::cout << solver.sthc(arm) << std::endl;
-    // std::cout << solver.sma(arm, 1000) << std::endl;
-
-    // std::cout << arm.heuristic(arm.current) << std::endl;
-    // std::cout << arm.current.awx << std::endl;
-
-    // limb next;
-    // int rule = 0;
-    // while (true)
-    // {
-    //     rule = solver.sthc(arm);
-    //     if (!(rule <= arm.max_rule && rule > 0))
-    //         break;
-    //     else
-    //     {
-    //         std::cout << rule << std::endl;
-    //         arm.current = arm.apply(rule);
-    //     }
-    // }
-
-    // std::cout << arm.heuristic(arm.current) << std::endl;
-    // std::cout << arm.current.awx << std::endl;
+    std::cout << body[0].heuristic(body[0].current) << std::endl;
 
     return 0;
 }
