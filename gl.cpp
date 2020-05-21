@@ -5,7 +5,8 @@
 #include "my_math.h"
 
 agis<problem> solver;
-problem body[2];
+problem body[3];
+float goal[] = {0, 0};
 
 void init();
 void display();
@@ -33,12 +34,13 @@ void init()
     glClearColor(1, 1, 1, 1);
 
     float origin[] = {0, 0};
-    body[0] = problem(origin, 0, 2, -91, 91);
-    body[1] = problem(&body[0].current, 0, 2, -91, 91);
+    body[0] = problem(origin, 0, 2, 91);
+    body[1] = problem(&body[0].current, 0, 3, 91);
+    body[2] = problem(&body[1].current, 0, 1, 91);
     body[0].current.set_child(&body[1].current);
+    body[1].current.set_child(&body[2].current);
 
-    float goal[] = {0, 0};
-    body[1].current.set_goal(goal);
+    body[2].current.set_goal(goal);
 }
 
 void display()
@@ -46,6 +48,13 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
+    glBegin(GL_POINTS);
+    {
+        glColor3f(1, 0, 0);
+        glPointSize(10);
+        glVertex2f(goal[0], goal[1]);
+    }
+    glEnd();
     glColor3f(0, 0, 0);
 
     glBegin(GL_LINE_STRIP);
@@ -78,15 +87,13 @@ void timer(int)
     glutTimerFunc(1000 / 60, timer, 0);
 
     int rule;
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 3; i++)
     {
         rule = solver.sthc(body[i]);
         if (rule <= body[i].max_rule && rule > 0)
         {
             body[i].current = body[i].apply(rule);
         }
-        else
-            continue;
     }
 
     // std::cout << arm.current.awx << std::endl;

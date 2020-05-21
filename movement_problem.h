@@ -13,14 +13,15 @@ public:
     float goal[2] = {-1, -1};
 
     limb();
-    limb(float *joint, float awx, float length, float climit, float aclimit);
-    limb(limb *parent_joint, float awx, float length, float climit, float aclimit);
+    limb(float *joint, float awx, float length, float limit);
+    limb(limb *parent_joint, float awx, float length, float limit);
     limb(const limb &obj);
     ~limb();
 
     bool exist();
     void set_child(limb *child_joint);
     void set_goal(float *g);
+    void propagate_change();
     float heuristic();
     void display();
 };
@@ -30,26 +31,26 @@ limb::limb()
     joint[0] = -1;
 }
 
-limb::limb(float *joint, float awx, float length, float climit, float aclimit)
+limb::limb(float *joint, float awx, float length, float limit)
 {
     for (int i = 0; i < 2; i++)
         this->joint[i] = *(joint + i);
     this->awx = awx;
     this->length = length;
     this->child_joint = NULL;
-    this->climit = climit;
-    this->aclimit = aclimit;
+    this->climit = awx - limit;
+    this->aclimit = awx + limit;
 }
 
-limb::limb(limb *parent_joint, float awx, float length, float climit, float aclimit)
+limb::limb(limb *parent_joint, float awx, float length, float limit)
 {
     this->joint[0] = (cos(rad((*parent_joint).awx)) * (*parent_joint).length) + (*parent_joint).joint[0];
     this->joint[1] = (sin(rad((*parent_joint).awx)) * (*parent_joint).length) + (*parent_joint).joint[1];
     this->awx = awx;
     this->length = length;
     this->child_joint = NULL;
-    this->climit = climit;
-    this->aclimit = aclimit;
+    this->climit = awx - limit;
+    this->aclimit = awx + limit;
 }
 
 limb::limb(const limb &obj)
@@ -67,11 +68,11 @@ limb::limb(const limb &obj)
     for (int i = 0; i < 2; i++)
         goal[i] = obj.goal[i];
 
-    if (child_joint != NULL)
-    {
-        (*child_joint).joint[0] = (cos(rad(awx)) * length) + joint[0];
-        (*child_joint).joint[1] = (sin(rad(awx)) * length) + joint[1];
-    }
+    // if (child_joint != NULL)
+    // {
+    //     (*child_joint).joint[0] = (cos(rad(awx)) * length) + joint[0];
+    //     (*child_joint).joint[1] = (sin(rad(awx)) * length) + joint[1];
+    // }
 }
 
 limb::~limb() {}
@@ -96,6 +97,16 @@ void limb::set_goal(float *g)
     catch (std::exception e)
     {
         std::cout << "Exception while setting goal" << std::endl;
+    }
+}
+
+void limb::propagate_change()
+{
+    if (child_joint != NULL)
+    {
+        (*child_joint).joint[0] = cos(rad(awx)) * length + joint[0];
+        (*child_joint).joint[1] = sin(rad(awx)) * length + joint[1];
+        (*child_joint).propagate_change();
     }
 }
 
@@ -140,8 +151,8 @@ public:
     int max_rule = 2;
 
     problem();
-    problem(float *joint, float awx, float length, float climit, float aclimit);
-    problem(limb *parent_joint, float awx, float length, float climit, float aclimit);
+    problem(float *joint, float awx, float length, float limit);
+    problem(limb *parent_joint, float awx, float length, float limit);
     ~problem();
 
     limb rotate_c();
@@ -152,14 +163,14 @@ public:
 
 problem::problem() {}
 
-problem::problem(float *joint, float awx, float length, float climit, float aclimit)
+problem::problem(float *joint, float awx, float length, float limit)
 {
-    current = limb(joint, awx, length, climit, aclimit);
+    current = limb(joint, awx, length, limit);
 }
 
-problem::problem(limb *parent_joint, float awx, float length, float climit, float aclimit)
+problem::problem(limb *parent_joint, float awx, float length, float limit)
 {
-    current = limb(parent_joint, awx, length, climit, aclimit);
+    current = limb(parent_joint, awx, length, limit);
 }
 
 problem::~problem()
@@ -174,6 +185,7 @@ limb problem::rotate_c()
         // std::cout << " can be rotated clock wise" << std::endl;
         result = current;
         --result.awx;
+        result.propagate_change();
     }
     return result;
 }
@@ -186,6 +198,7 @@ limb problem::rotate_ac()
         // std::cout << " can be rotated anit clock wise" << std::endl;
         result = current;
         ++result.awx;
+        result.propagate_change();
     }
     return result;
 }
